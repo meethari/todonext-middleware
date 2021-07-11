@@ -11,7 +11,7 @@ const Strategy = require('passport-local').Strategy;
 
 const setUpMongoose = () => {
     mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-    var taskSchema = mongoose.Schema({
+    const taskSchema = mongoose.Schema({
         text: {
             type: String,
             required: true
@@ -21,7 +21,7 @@ const setUpMongoose = () => {
             default: false
         } 
     })
-    var Task = mongoose.model('task', taskSchema)
+    const Task = mongoose.model('task', taskSchema)
 
     var userSchema =  mongoose.Schema({
         username: {
@@ -31,14 +31,25 @@ const setUpMongoose = () => {
         password: {
             type: String,
             required: true
-        }
+        },
+        lists: [mongoose.Schema.Types.ObjectId]
     })
     var User = mongoose.model('user', userSchema)
 
-    return {Task, User}
+    const listSchema = mongoose.Schema({
+        listName: {
+            type: String,
+            required: true
+        },
+        tasks: [mongoose.Schema.Types.ObjectId]
+    })
+
+    const List = mongoose.model('list', listSchema)
+
+    return {Task, User, List}
 }
 
-var {Task, User} = setUpMongoose()
+var {Task, User, List} = setUpMongoose()
 
 // Passport
 
@@ -101,7 +112,7 @@ app.post('/register', async function (req, res) {
     }
 
     // Create user
-    var newUser = new User({username: req.body.username, password: req.body.password})
+    var newUser = new User({username: req.body.username, password: req.body.password, lists: []})
     await newUser.save()
 
     // log in user and redirect them
@@ -195,6 +206,50 @@ app.delete('/api/tasks/:id', connect_ensure_login.ensureLoggedIn(), async (req, 
             res.status(404).send('No matching document found')
     } catch (err) {
         res.status(404).send(err)
+    }
+})
+
+// lists handler
+
+app.get('/api/lists/', connect_ensure_login.ensureLoggedIn(), (req, res) => {
+    // current user
+    try {
+        var results = []
+        for (var i = 0; i < req.user.lists.length(); i++) {
+            const foundList = List.findOneById(req.user._id)
+            results.append(foundList)
+        }
+        res.status(200).send(results)
+    } catch(err) {
+        res.status(404).send(err)
+    }
+
+})
+
+app.post('/api/lists/', connect_ensure_login.ensureLoggedIn(), async (req, res) => {
+    // we need listName
+    try {
+        var newList = new Task(req.body)
+        await newList.save()
+        res.status(201).send(newList)
+    } catch (err) {
+        res.status(404).send(err)
+    }
+})
+
+app.patch('/api/lists/:id', connect_ensure_login.ensureLoggedIn(), async (req, res) => {
+    // the tasks list provided replaces the current list
+    var foundList = List.findById(req.params.id)
+
+    if (foundList == null) {
+        res.status(404).send({message : "Couldn't find that list"})
+    }
+
+    foundList.tasks = req.body.tasks
+    try {
+        foundList.save()
+    } catch(err) {
+        res.status(404).send(foundList)
     }
 })
 
