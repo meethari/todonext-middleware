@@ -1,1 +1,1 @@
-curl localhost:5000/api/lists/ --cookie jarfile -X POST -H "Content-Type: application/json" --data '{"listName": "work"}'
+curl localhost:5000/api/lists/ --cookie jarfile -X POST -H "Content-Type: application/json" --data '{"listName": "side projects"}'

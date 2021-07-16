@@ -1,1 +1,1 @@
-curl localhost:5000/api/lists --cookie jarfile
+curl localhost:5000/api/lists --cookie jarfile | python -m json.tool

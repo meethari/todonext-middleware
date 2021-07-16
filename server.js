@@ -246,29 +246,20 @@ app.post('/api/lists/', connect_ensure_login.ensureLoggedIn(), async (req, res) 
 
 app.patch('/api/lists/:id', connect_ensure_login.ensureLoggedIn(), async (req, res) => {
     // the tasks list provided replaces the current list
-    var foundList = List.findById(req.params.id)
+    var foundList = await List.findById(req.params.id)
 
     if (foundList == null) {
         res.status(404).send({message : "Couldn't find that list"})
     }
 
-    foundList.tasks = req.body.tasks
+    foundList.listName = req.body.listName
     try {
         foundList.save()
+        res.send(foundList)
     } catch(err) {
-        res.status(404).send(foundList)
-    }
+        res.status(404).send({message : "Error in updating listName"})
+    } 
 })
-
-if (process.env.NODE_ENV == 'production') {
-    // Serve any static files
-    app.use(express.static(path.join(__dirname, 'client/build')));
-    
-    // Handle React routing, return all requests to React app
-    app.get('*', function(req, res) {
-        res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
-    });
-}
 
 const port = process.env.PORT || 5000
 
