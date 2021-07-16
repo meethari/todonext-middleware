@@ -1,5 +1,5 @@
 {
-  "name": "todo_api",
+  "name": "todonext-middleware",
   "version": "1.0.0",
   "description": "API endpoints for todo list app",
   "main": "server.js",
@@ -10,6 +10,7 @@
     "express-session": "^1.17.1",
     "mongodb": "^3.6.1",
     "mongoose": "^5.13.0",
+    "morgan": "^1.10.0",
     "passport": "^0.4.1",
     "passport-google-oauth": "^2.0.0",
     "passport-local": "^1.0.0"

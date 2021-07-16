@@ -1,6 +1,7 @@
 // Requires
 const express = require('express')
 require('dotenv').config()
+const morgan = require('morgan')
 const path = require('path');
 const mongoose = require('mongoose')
 const passport = require('passport')
@@ -79,6 +80,7 @@ passport.deserializeUser(function(id, done) {
 // Express App
 
 const app = express()
+app.use(morgan('dev'))
 app.use(express.json())
 app.use(require('express-session')({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: false }));
 // Initialize Passport and restore authentication state, if any, from the
@@ -211,17 +213,17 @@ app.delete('/api/tasks/:id', connect_ensure_login.ensureLoggedIn(), async (req, 
 
 // lists handler
 
-app.get('/api/lists/', connect_ensure_login.ensureLoggedIn(), (req, res) => {
+app.get('/api/lists/', connect_ensure_login.ensureLoggedIn(), async (req, res) => {
     // current user
     try {
         var results = []
-        for (var i = 0; i < req.user.lists.length(); i++) {
-            const foundList = List.findOneById(req.user._id)
-            results.append(foundList)
+        for (var i = 0; i < req.user.lists.length; i++) {
+            const foundList = await List.findById(req.user.lists[i])
+            results.push(foundList)
         }
         res.status(200).send(results)
     } catch(err) {
-        res.status(404).send(err)
+        res.status(404).send({message: "Error"})
     }
 
 })
@@ -229,11 +231,16 @@ app.get('/api/lists/', connect_ensure_login.ensureLoggedIn(), (req, res) => {
 app.post('/api/lists/', connect_ensure_login.ensureLoggedIn(), async (req, res) => {
     // we need listName
     try {
-        var newList = new Task(req.body)
+        var newList = new List(req.body)
         await newList.save()
+
+        // add list to user
+        req.user.lists.push([newList._id])
+        req.user.save()
+        
         res.status(201).send(newList)
     } catch (err) {
-        res.status(404).send(err)
+        res.status(404).send({message: "error"})
     }
 })
 
