@@ -1,0 +1,1 @@
+curl localhost:5000/api/lists/60f2cbc1077b924b23a5a121 -X DELETE --cookie jarfile

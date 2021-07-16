@@ -29,5 +29,7 @@
     "url": "https://github.com/meethari/todo_react/issues"
   },
   "homepage": "https://github.com/meethari/todo_react#readme",
-  "devDependencies": {}
+  "devDependencies": {
+    "axios": "^0.21.1"
+  }
 }

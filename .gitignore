@@ -5,4 +5,5 @@ tasklist.md
 client/build
 newreadme.md
 test_scripts/login.sh
+create_list_tasks_and_delete.js
 jarfile
