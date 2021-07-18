@@ -182,6 +182,7 @@ app.delete('/api/lists/:listId', connect_ensure_login.ensureLoggedIn() , async (
     }
 })
 
+// delete task in a list
 app.delete('/api/lists/:listId/tasks/:taskId', connect_ensure_login.ensureLoggedIn(), async (req, res) => {
     try {
         var foundList = await List.findById(req.params.listId)
@@ -196,9 +197,7 @@ app.delete('/api/lists/:listId/tasks/:taskId', connect_ensure_login.ensureLogged
     }
 })
 
-/* 
-    GET handler for tasks from taskId
-*/
+// get task that belongs to a list
 app.get('/api/lists/:listId/tasks/:taskId', connect_ensure_login.ensureLoggedIn(), async (req, res) => {
     try {
         var foundTask = await Task.findById(req.params.taskId)
@@ -209,7 +208,40 @@ app.get('/api/lists/:listId/tasks/:taskId', connect_ensure_login.ensureLoggedIn(
     }
 })
 
+// patch handler for tasks in a list
+app.patch('/api/lists/:listId/tasks/:id', connect_ensure_login.ensureLoggedIn(), async (req, res) => {
 
+    const task = await Task.findById(req.params.id)
+
+    if (task == null) {
+        res.status(404).send({message: "No matching document found"})
+        return
+    }
+
+    const sentObject = req.body
+
+    if (!('done' in sentObject || 'text' in sentObject)) {
+        res.status(404).send({message: "Either done or text fields should be present"})
+        return
+    }
+
+    if ('done' in sentObject) {
+        task.done = sentObject.done
+    }
+
+    if (sentObject.text) {
+        task.text = sentObject.text
+    }
+
+    try {
+        task.save()
+        res.send(task)
+    } catch(err) {
+        console.log(err)
+        res.status(404).send({message: "Unable to modify task"})
+    } 
+
+})
 
 app.get('/api/lists/:listId', connect_ensure_login.ensureLoggedIn() , async (req, res) => {
     // get list object, with all tasks embedded

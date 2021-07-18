@@ -1,0 +1,1 @@
+curl localhost:5000/api/lists/60f0db9d70d9dc028502d616/tasks/60f2bc7f693ee045126d65dd -X PATCH --cookie jarfile -H "Content-Type: application/json" --data '{"done": true, "text": "study for math 450 test"}'
