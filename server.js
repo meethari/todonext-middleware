@@ -182,15 +182,7 @@ app.delete('/api/lists/:listId', connect_ensure_login.ensureLoggedIn() , async (
     }
 })
 
-/*
-    PATCH handler for task ID
-    Get list from listId
-    Get task from taskId
-    Delete the task from the database
-    Delete the taskId from list.tasks
-    Return the modified list
-*/
-app.patch('/api/lists/:listId/tasks/:taskId', connect_ensure_login.ensureLoggedIn(), async (req, res) => {
+app.delete('/api/lists/:listId/tasks/:taskId', connect_ensure_login.ensureLoggedIn(), async (req, res) => {
     try {
         var foundList = await List.findById(req.params.listId)
         var foundTask = await Task.findById(req.params.taskId)
@@ -247,49 +239,6 @@ app.get('/api/lists/:listId', connect_ensure_login.ensureLoggedIn() , async (req
     }
 })
 
-app.patch('/api/tasks/:id', connect_ensure_login.ensureLoggedIn(), async (req, res) => {
-    // handler for update
-    const task = await Task.findById(req.params.id)
-
-    if (task == null) {
-        res.status(404).send("No matching document found")
-        return
-    }
-
-    const sentObject = req.body
-
-    if (!('done' in sentObject && 'text' in sentObject)) {
-        res.status(404).send("Both done and text fields should be present")
-        return
-    }
-
-    task.done = sentObject.done
-    task.text = sentObject.text
-
-    try {
-        task.save()
-    } catch {
-        res.status(404).send("Both done and text fields should be present")
-    } finally {
-        res.send(task)
-    }
-
-
-})
-
-app.delete('/api/tasks/:id', connect_ensure_login.ensureLoggedIn(), async (req, res) => {
-    // handler for delete
-
-    try {
-        const returnVal = await Task.deleteOne({_id: req.params.id})
-        if (returnVal && returnVal.deletedCount > 0)
-            res.status(200).send('OK')
-        else 
-            res.status(404).send('No matching document found')
-    } catch (err) {
-        res.status(404).send(err)
-    }
-})
 
 // lists handler
 
