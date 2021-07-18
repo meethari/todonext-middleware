@@ -1,24 +1,29 @@
+# ToDoNext - Middleware
+
+This is an express API that the ToDoNext frontend connects to.
+
 ## API Guide
 
-/api/tasks endpoint
+### User handlers
+POST /login - provide username and password fields
+POST /logout - logs user out
+POST /register - provide username and password fields to create an account
 
-### GET
-Returns all tasks
-Performing get on /api/tasks/:id returns the task corresponding to the ID if available with a 200 OK status.
-If not available, returns a 404 status.
+### Lists handlers
+/api/lists endpoint
+GET - get all lists available to current user
+POST - create new list - requires listName field, tasks optional
 
-### POST
-Adds task to database.
-Request body should contain task object with 'done' and 'text' properties.
-If add succeeds, returns 201 status. Else returns 404 with error.
+/api/lists/:listID endpoint
++ GET - get list, with all tasks embedded
++ PATCH - to modify list (usually just rename) - requires listName field
++ DELETE - delete existing list 
 
-### DELETE
-Deletes specified task
-Send DELETE requests to /api/tasks/:id
-If the id is present, the corresponding task is deleted and a 200 message is sent. Else, a 404 message is sent.
+### Tasks handlers
+/api/lists/:listID/tasks/ endpoint
++ POST - create new task - requires text field, done optional
 
-### PATCH
-Updates specified task
-Send PATCH requests to /api/tasks/:id
-Request body should contain task object with 'done' and 'text' properties.
-If update succeeds, returns 200 status. Else returns 404 with error.
+/api/lists/:listID/tasks/:taskID endpoint
++ GET - get task  
++ PATCH - update task - require either text or done field
++ DELETE - delete task 

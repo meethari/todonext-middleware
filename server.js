@@ -88,6 +88,8 @@ app.use(require('express-session')({ secret: process.env.SESSION_SECRET, resave:
 app.use(passport.initialize());
 app.use(passport.session());
 
+// user handlers
+
 app.post('/login', passport.authenticate('local'), function(req, res) {
     res.send({"message": "logged in"})
 })
