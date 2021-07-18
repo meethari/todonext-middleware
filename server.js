@@ -130,8 +130,9 @@ app.post('/register', async function (req, res) {
 
 } )
 
-// Lists handlers
+// tasks handlers
 
+// create task
 app.post('/api/lists/:listId/tasks', connect_ensure_login.ensureLoggedIn(), async (req, res) => {
 
     // create task
@@ -156,30 +157,6 @@ app.post('/api/lists/:listId/tasks', connect_ensure_login.ensureLoggedIn(), asyn
     }
     
 
-})
-
-// need to delete all of the relevant tasks too
-app.delete('/api/lists/:listId', connect_ensure_login.ensureLoggedIn() , async (req, res) => {
-    try {
-        // delete tasks associated with list
-        var foundList = await List.findById(req.params.listId)
-        var tasksToDelete = foundList.tasks
-        await Promise.all(tasksToDelete.map(async (taskId) => {
-            await Task.findByIdAndRemove(taskId)
-        }))
-
-        // delete the list from the user
-        var foundUser = await User.findById(req.user._id)
-        foundUser.lists.splice(foundUser.lists.indexOf(foundList._id), 1)
-        await foundUser.save()
-
-        // finally delete the user
-        await foundList.remove()
-        res.send({"message" : "list deleted"})
-    } catch(err) {
-        res.status(404).send({"message" : "list could not be deleted"})
-        console.log(err)
-    }
 })
 
 // delete task in a list
@@ -243,6 +220,25 @@ app.patch('/api/lists/:listId/tasks/:id', connect_ensure_login.ensureLoggedIn(),
 
 })
 
+// lists handler
+
+// get all lists
+app.get('/api/lists/', connect_ensure_login.ensureLoggedIn(), async (req, res) => {
+    // current user
+    try {
+        var results = []
+        for (var i = 0; i < req.user.lists.length; i++) {
+            const foundList = await List.findById(req.user.lists[i])
+            results.push(foundList)
+        }
+        res.status(200).send(results)
+    } catch(err) {
+        res.status(404).send({message: "Error"})
+    }
+
+})
+
+// get specific list
 app.get('/api/lists/:listId', connect_ensure_login.ensureLoggedIn() , async (req, res) => {
     // get list object, with all tasks embedded
 
@@ -271,24 +267,7 @@ app.get('/api/lists/:listId', connect_ensure_login.ensureLoggedIn() , async (req
     }
 })
 
-
-// lists handler
-
-app.get('/api/lists/', connect_ensure_login.ensureLoggedIn(), async (req, res) => {
-    // current user
-    try {
-        var results = []
-        for (var i = 0; i < req.user.lists.length; i++) {
-            const foundList = await List.findById(req.user.lists[i])
-            results.push(foundList)
-        }
-        res.status(200).send(results)
-    } catch(err) {
-        res.status(404).send({message: "Error"})
-    }
-
-})
-
+// create list
 app.post('/api/lists/', connect_ensure_login.ensureLoggedIn(), async (req, res) => {
     // we need listName
     try {
@@ -306,6 +285,7 @@ app.post('/api/lists/', connect_ensure_login.ensureLoggedIn(), async (req, res) 
     }
 })
 
+// modify listName of list
 app.patch('/api/lists/:id', connect_ensure_login.ensureLoggedIn(), async (req, res) => {
     // the tasks list provided replaces the current list
     var foundList = await List.findById(req.params.id)
@@ -322,6 +302,30 @@ app.patch('/api/lists/:id', connect_ensure_login.ensureLoggedIn(), async (req, r
         console.log(err)
         res.status(404).send({message : "Error in updating listName"})
     } 
+})
+
+// delete list
+app.delete('/api/lists/:listId', connect_ensure_login.ensureLoggedIn() , async (req, res) => {
+    try {
+        // delete tasks associated with list
+        var foundList = await List.findById(req.params.listId)
+        var tasksToDelete = foundList.tasks
+        await Promise.all(tasksToDelete.map(async (taskId) => {
+            await Task.findByIdAndRemove(taskId)
+        }))
+
+        // delete the list from the user
+        var foundUser = await User.findById(req.user._id)
+        foundUser.lists.splice(foundUser.lists.indexOf(foundList._id), 1)
+        await foundUser.save()
+
+        // finally delete the user
+        await foundList.remove()
+        res.send({"message" : "list deleted"})
+    } catch(err) {
+        res.status(404).send({"message" : "list could not be deleted"})
+        console.log(err)
+    }
 })
 
 const port = process.env.PORT || 5000
