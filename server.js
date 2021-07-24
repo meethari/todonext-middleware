@@ -330,6 +330,31 @@ app.delete('/api/lists/:listId', connect_ensure_login.ensureLoggedIn() , async (
     }
 })
 
+// post handler - move task from :listId to :newListId
+app.post('/api/lists/:listId/tasks/:taskId/move', connect_ensure_login.ensureLoggedIn(), async (req, res) => {
+    try {
+        var foundList = await List.findById(req.params.listId)
+        var foundTask = await Task.findById(req.params.taskId)
+        var newList = await List.findById(req.params.newListId)
+
+        // add task to new list
+        newList.tasks.push(foundTask._id)
+        newList.save()
+
+        // remove task from old list
+        foundList.tasks.splice(foundList.tasks.indexOf(foundTask._id), 1)
+        foundList.save()
+        res.send(newList)
+    }
+    catch(err) {
+        res.status(404).send({"message" : "task could not be moved"})
+        console.log(err)
+    }
+})
+
+
+
+
 const port = process.env.PORT || 5000
 
 app.listen(port, () => {console.log(`Listening at port ${port}`)})
