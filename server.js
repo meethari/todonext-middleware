@@ -352,7 +352,9 @@ app.post('/api/lists/:listId/tasks/:taskId/move', connect_ensure_login.ensureLog
     }
 })
 
-
+app.get('/api', (req, res) => {
+    res.send({"message": "This is the ToDoNext Middleware."})
+})
 
 
 const port = process.env.PORT || 5000
