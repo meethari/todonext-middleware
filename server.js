@@ -7,6 +7,7 @@ const mongoose = require('mongoose')
 const passport = require('passport')
 const connect_ensure_login = require('connect-ensure-login')
 const Strategy = require('passport-local').Strategy;
+const cors = require('cors')
 
 // Mongoose
 
@@ -80,6 +81,7 @@ passport.deserializeUser(function(id, done) {
 // Express App
 
 const app = express()
+app.use(cors())
 app.use(morgan('dev'))
 app.use(express.json())
 app.use(require('express-session')({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: false }));
