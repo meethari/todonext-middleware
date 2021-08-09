@@ -2,6 +2,9 @@
 
 This is an express API that the ToDoNext frontend connects to.
 
+## Acknowledgements
+I used Anurag Majumdar's [E-commerce API project](https://github1s.com/anurag-majumdar/ecommerce-rest-api/) as reference. The organization of the api folder and some of the middleware functions were inspired by it.
+
 ## API Guide
 
 ### User handlers
