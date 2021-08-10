@@ -1,106 +1,4 @@
-// Requires
-const express = require('express')
-require('dotenv').config()
-const morgan = require('morgan')
-const path = require('path');
-const passport = require('passport')
-const connect_ensure_login = require('connect-ensure-login')
-const Strategy = require('passport-local').Strategy;
-const cors = require('cors')
 
-// Mongoose
-
-const setUpMongoose = () => {
-
-    
-
-    
-
-    return {Task, User, List}
-}
-
-var {Task, User, List} = setUpMongoose()
-
-// Passport
-
-passport.use(new Strategy(
-    function(username, password, done) {
-        User.findOne({username: username}, function(err, user){
-            if (err) {return(done(err))}
-            if (!user) {return(done(null, false))}
-            if (user.password != password) {return done(null, false)}
-            return done(null, user)
-        })
-    }
-))
-
-// Serialize and deserialize
-passport.serializeUser(function(user, done) {
-    done(null, user._id)
-})
-
-passport.deserializeUser(function(id, done) {
-    User.findById(id, function(err, user) {
-        if (err) {return done(err)}
-        done(null, user)
-    })
-})
-
-// Express App
-
-const app = express()
-app.use(cors())
-app.use(morgan('dev'))
-app.use(express.json())
-app.use(require('express-session')({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: false }));
-// Initialize Passport and restore authentication state, if any, from the
-// session.
-app.use(passport.initialize());
-app.use(passport.session());
-
-// user handlers
-
-app.post('/login', passport.authenticate('local'), function(req, res) {
-    res.send({"message": "logged in"})
-})
-
-app.post('/logout', (req, res) => {
-    req.logout()
-    res.send({"message": "logged out"})
-})
-
-app.post('/register', async function (req, res) {
-
-    // If both fields not provided, reject
-    if (!(req.body.username && req.body.password)) {
-        res.status(404).send('Format: {username, password}')
-        return
-    }
-
-    // Check if user already exists
-    userExists = await User.findOne({'username': req.body.username})
-
-    if (userExists) {
-        res.status(409).send('Account already exists. Try logging in.')
-        return
-    }
-
-    // Create user
-    var newUser = new User({username: req.body.username, password: req.body.password, lists: []})
-    await newUser.save()
-
-    // log in user and redirect them
-    req.login(newUser, (err) => {
-        if (err) {
-            return res.status(500).send('Error in logging in user')
-        }
-        return res.status(200).send('Registered and logged in!')
-
-    })
-
-    // TODO 2: when you do this, provide the UI a message
-
-} )
 
 // tasks handlers
 
@@ -195,20 +93,7 @@ app.patch('/api/lists/:listId/tasks/:id', connect_ensure_login.ensureLoggedIn(),
 // lists handler
 
 // get all lists
-app.get('/api/lists/', connect_ensure_login.ensureLoggedIn(), async (req, res) => {
-    // current user
-    try {
-        var results = []
-        for (var i = 0; i < req.user.lists.length; i++) {
-            const foundList = await List.findById(req.user.lists[i])
-            results.push(foundList)
-        }
-        res.status(200).send(results)
-    } catch(err) {
-        res.status(404).send({message: "Error"})
-    }
-
-})
+app.get('/api/lists/', connect_ensure_login.ensureLoggedIn(), )
 
 // get specific list
 app.get('/api/lists/:listId', connect_ensure_login.ensureLoggedIn() , async (req, res) => {

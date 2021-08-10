@@ -1,1 +1,1 @@
-curl "{$TARGET}/api/lists" --cookie jarfile | python -m json.tool
+curl "$TARGET/api/lists" -H "Authorization: Bearer $JWT" | python -m json.tool
