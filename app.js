@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 
 // TODO: import routes here
+const userRoutes = require('./api/routes/user')
 
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 
@@ -18,6 +19,7 @@ app.use(express.json())
 app.use(cors())
 
 // Add Route routers
+app.use('/api/user', userRoutes)
 
 // Handle 404s
 app.use((req, res, next) => {
