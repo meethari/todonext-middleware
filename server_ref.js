@@ -3,7 +3,6 @@ const express = require('express')
 require('dotenv').config()
 const morgan = require('morgan')
 const path = require('path');
-const mongoose = require('mongoose')
 const passport = require('passport')
 const connect_ensure_login = require('connect-ensure-login')
 const Strategy = require('passport-local').Strategy;
@@ -12,41 +11,10 @@ const cors = require('cors')
 // Mongoose
 
 const setUpMongoose = () => {
+
     
-    const taskSchema = mongoose.Schema({
-        text: {
-            type: String,
-            required: true
-        },
-        done: {
-            type: Boolean,
-            default: false
-        } 
-    })
-    const Task = mongoose.model('task', taskSchema)
 
-    var userSchema =  mongoose.Schema({
-        username: {
-            type: String,
-            required: true
-        },
-        password: {
-            type: String,
-            required: true
-        },
-        lists: [mongoose.Schema.Types.ObjectId]
-    })
-    var User = mongoose.model('user', userSchema)
-
-    const listSchema = mongoose.Schema({
-        listName: {
-            type: String,
-            required: true
-        },
-        tasks: [mongoose.Schema.Types.ObjectId]
-    })
-
-    const List = mongoose.model('list', listSchema)
+    
 
     return {Task, User, List}
 }
