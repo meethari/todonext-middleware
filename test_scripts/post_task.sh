@@ -1,2 +1,2 @@
 # adds a task to the given list
-curl "$TARGET/api/lists/6112c8a9499c0aae9e19b59a/tasks" -X POST -H "Content-Type: application/json" -H "Authorization: Bearer $JWT"  --data '{"text": "read Harry Potter"}'
+curl "$TARGET/api/lists/$1/tasks" -X POST -H "Content-Type: application/json" -H "Authorization: Bearer $JWT"  --data '{"text": "read Harry Potter"}'

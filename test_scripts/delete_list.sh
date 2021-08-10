@@ -1,1 +1,1 @@
-curl localhost:5000/api/lists/60f0db0f70d9dc028502d60e -X DELETE --cookie jarfile
+curl "$TARGET/api/lists/$1" -X DELETE -H "Authorization: Bearer $JWT"

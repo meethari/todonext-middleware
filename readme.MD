@@ -8,9 +8,9 @@ I used Anurag Majumdar's [E-commerce API project](https://github1s.com/anurag-ma
 ## API Guide
 
 ### User handlers
-* POST /login - provide username and password fields
-* POST /logout - logs user out
-* POST /register - provide username and password fields to create an account
+* POST /api/users/login - provide username and password fields
+* POST /api/users/logout - logs user out
+* POST /api/users/register - provide username and password fields to create an account
 
 ### Lists handlers
 /api/lists endpoint
