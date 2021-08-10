@@ -92,8 +92,6 @@ app.patch('/api/lists/:listId/tasks/:id', connect_ensure_login.ensureLoggedIn(),
 
 // lists handler
 
-// get all lists
-app.get('/api/lists/', connect_ensure_login.ensureLoggedIn(), )
 
 // get specific list
 app.get('/api/lists/:listId', connect_ensure_login.ensureLoggedIn() , async (req, res) => {
@@ -124,43 +122,6 @@ app.get('/api/lists/:listId', connect_ensure_login.ensureLoggedIn() , async (req
     }
 })
 
-// create list
-app.post('/api/lists/', connect_ensure_login.ensureLoggedIn(), async (req, res) => {
-    // we need listName
-    try {
-        var newList = new List(req.body)
-        await newList.save()
-
-        // add list to user
-        req.user.lists.push([newList._id])
-        req.user.save()
-        
-        res.status(201).send(newList)
-    } catch (err) {
-        console.log(err)
-        res.status(404).send({message: "error"})
-    }
-})
-
-// modify listName of list
-app.patch('/api/lists/:id', connect_ensure_login.ensureLoggedIn(), async (req, res) => {
-    // the tasks list provided replaces the current list
-    var foundList = await List.findById(req.params.id)
-
-    if (foundList == null) {
-        res.status(404).send({message : "Couldn't find that list"})
-    }
-
-    foundList.listName = req.body.listName
-    try {
-        foundList.save()
-        res.send(foundList)
-    } catch(err) {
-        console.log(err)
-        res.status(404).send({message : "Error in updating listName"})
-    } 
-})
-
 // delete list
 app.delete('/api/lists/:listId', connect_ensure_login.ensureLoggedIn() , async (req, res) => {
     try {
@@ -185,27 +146,6 @@ app.delete('/api/lists/:listId', connect_ensure_login.ensureLoggedIn() , async (
     }
 })
 
-// post handler - move task from :listId to :newListId
-app.post('/api/lists/:listId/tasks/:taskId/move', connect_ensure_login.ensureLoggedIn(), async (req, res) => {
-    try {
-        var foundList = await List.findById(req.params.listId)
-        var foundTask = await Task.findById(req.params.taskId)
-        var newList = await List.findById(req.params.newListId)
-
-        // add task to new list
-        newList.tasks.push(foundTask._id)
-        newList.save()
-
-        // remove task from old list
-        foundList.tasks.splice(foundList.tasks.indexOf(foundTask._id), 1)
-        foundList.save()
-        res.send(newList)
-    }
-    catch(err) {
-        res.status(404).send({"message" : "task could not be moved"})
-        console.log(err)
-    }
-})
 
 app.get('/api', (req, res) => {
     res.send({"message": "This is the ToDoNext Middleware."})

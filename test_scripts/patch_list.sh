@@ -1,2 +1,2 @@
 # updates the listName of the given list
-curl localhost:5000/api/lists/60f1b9d9072dc32933fd4c26 --cookie jarfile -X PATCH -H "Content-Type: application/json" --data '{"listName": "startup"}'
+curl "$TARGET/api/lists/6112c8a9499c0aae9e19b59a" -X PATCH -H "Content-Type: application/json" -H "Authorization: Bearer $JWT"  --data '{"listName": "amazing list"}'

@@ -1,1 +1,1 @@
-curl localhost:5000/api/lists/60f0db9d70d9dc028502d616/tasks/60f2bc7f693ee045126d65dd --cookie jarfile 
+curl "$TARGET/api/lists/6112c8a9499c0aae9e19b59a/tasks/6112cc0cd8c86eb073f11967" -H "Authorization: Bearer $JWT"

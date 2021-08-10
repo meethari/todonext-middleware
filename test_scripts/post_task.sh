@@ -1,2 +1,2 @@
 # adds a task to the given list
-curl localhost:5000/api/lists/60f0db9d70d9dc028502d616/tasks --cookie jarfile -X POST -H "Content-Type: application/json" --data '{"text": "do cs150 homework"}'
+curl "$TARGET/api/lists/6112c8a9499c0aae9e19b59a/tasks" -X POST -H "Content-Type: application/json" -H "Authorization: Bearer $JWT"  --data '{"text": "read Harry Potter"}'

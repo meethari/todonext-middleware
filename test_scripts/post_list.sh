@@ -1,1 +1,1 @@
-curl localhost:5000/api/lists/ --cookie jarfile -X POST -H "Content-Type: application/json" --data '{"listName": "side projects"}'
+curl "$TARGET/api/lists/" -H "Content-Type: application/json" -H "Authorization: Bearer $JWT" -X POST --data '{"listName": "side projects"}'
