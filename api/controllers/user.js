@@ -46,6 +46,28 @@ const errorHandler = (err, message, next) => {
     }
 }
 
-exports.register = () => {
-    // Similar to register, except a JWT is returned
-}
+exports.register = async (req, res) => {
+
+    // If both fields not provided, reject
+    if (!(req.body.username && req.body.password)) {
+        res.status(404).send('Format: {username, password}')
+        return
+    }
+
+    // Check if user already exists
+    userExists = await User.findOne({'username': req.body.username})
+
+    if (userExists) {
+        res.status(409).send('Account already exists. Try logging in.')
+        return
+    }
+
+    // Create user
+    var newUser = new User({username: req.body.username, password: req.body.password, lists: []})
+    await newUser.save()
+
+    // log in user and redirect them
+    const token = jwt.sign({id: newUser._id}, process.env.JWT_SECRET)
+    res.send({message: "successfully registered.", token: token})
+
+} 
