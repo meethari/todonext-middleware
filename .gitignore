@@ -4,8 +4,6 @@ sample_task.json
 tasklist.md
 client/build
 newreadme.md
-test_scripts/login.sh
-test_scripts/register.sh
 create_list_tasks_and_delete.js
 jarfile
 reference_files

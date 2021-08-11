@@ -1,1 +1,1 @@
-curl "$TARGET/api/lists/6112c8a9499c0aae9e19b59a/tasks/6112cc0cd8c86eb073f11967" -H "Authorization: Bearer $JWT"
+curl "$TARGET/api/lists/$1/tasks/$2" -H "Authorization: Bearer $JWT"

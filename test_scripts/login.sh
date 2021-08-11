@@ -1,0 +1,1 @@
+curl "$TARGET/api/users/login" -X POST -H "Content-Type: application/json" --data '{"username": "'"$1"'", "password": "'"$2"'"}'

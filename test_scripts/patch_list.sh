@@ -1,2 +1,2 @@
 # updates the listName of the given list
-curl "$TARGET/api/lists/6112c8a9499c0aae9e19b59a" -X PATCH -H "Content-Type: application/json" -H "Authorization: Bearer $JWT"  --data '{"listName": "amazing list"}'
+curl "$TARGET/api/lists/$1" -X PATCH -H "Content-Type: application/json" -H "Authorization: Bearer $JWT"  --data '{"listName": "amazing list"}'

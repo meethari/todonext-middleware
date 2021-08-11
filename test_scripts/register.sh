@@ -1,0 +1,1 @@
+curl "{$TARGET}/api/users/register" -X POST -H "Content-Type: application/json" --data '{"username": "'"$1"'", "password": "'"$2"'"}'
