@@ -5,6 +5,17 @@ This is an express API that the ToDoNext frontend connects to.
 ## Acknowledgements
 I used Anurag Majumdar's [E-commerce API project](https://github.com/anurag-majumdar/ecommerce-rest-api/) as reference. The organization of the api folder and some of the middleware functions were inspired by it.
 
+## Set up
+1. Clone the repo
+2. Create a .env file with the following fields:
+    MONGO_URI - URL to MongoDB instance containing DB username, password, and DB name
+
+    JWT_STRING - Randomly generated string
+    
+    PORT - optional, TCP port for the server to listen to
+3. Install using `npm i`
+4. Run using `npm run start`
+
 ## API Guide
 
 ### User handlers
