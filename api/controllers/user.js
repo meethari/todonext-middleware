@@ -1,8 +1,10 @@
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 const jwt = require('jsonwebtoken')
 require('dotenv').config()
 const User = require('../models/user')
 
-exports.login = (req, res, next) => {
+exports.login = async (req, res, next) => {
     /*
         Check if req.body has username and password
         If not, handle
@@ -17,14 +19,19 @@ exports.login = (req, res, next) => {
         return errorHandler(null, "Body must contain username and password", next)
     }
 
-    User.findOne({ username: req.body.username }, (err, user) => {
+    User.findOne({ username: req.body.username }, async (err, user) => {
         if (err) {
             return errorHandler(err, "", next)
         } else if (!user) {
             return errorHandler(null, "username does not exist", next)
-        } else if (user.password !== req.body.password) {
-            return errorHandler(null, "incorrect password", next)
         } else {
+
+            const isPasswordCorrect = await bcrypt.compare(req.body.password, user.passwordHash);
+
+            if (!isPasswordCorrect) {
+                return errorHandler(null, "incorrect password", next)
+            }
+
             const token = jwt.sign({id: user._id}, process.env.JWT_SECRET)
             res.send({"message": "successfully logged in", "token" : token})
         }
@@ -63,7 +70,8 @@ exports.register = async (req, res) => {
     }
 
     // Create user
-    var newUser = new User({username: req.body.username, password: req.body.password, lists: []})
+    const passwordHash = await bcrypt.hash(req.body.password, saltRounds)
+    var newUser = new User({username: req.body.username, passwordHash, lists: []})
     await newUser.save()
 
     // log in user and redirect them
