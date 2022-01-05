@@ -74,6 +74,8 @@ exports.register = async (req, res) => {
     var newUser = new User({username: req.body.username, passwordHash, lists: []})
     await newUser.save()
 
+    // generate onboarding list
+
     // log in user and redirect them
     const token = jwt.sign({id: newUser._id}, process.env.JWT_SECRET)
     res.send({message: "successfully registered.", token: token})
