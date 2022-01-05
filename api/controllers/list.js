@@ -1,6 +1,7 @@
 const List = require('../models/list.js')
 const Task = require('../models/task.js')
 const User = require('../models/user.js')
+const {createList, createTask} = require('./functions.js')
 
 exports.getAllLists = async (req, res) => {
     // current user
@@ -20,12 +21,7 @@ exports.getAllLists = async (req, res) => {
 exports.createList = async (req, res) => {
     // we need listName
     try {
-        var newList = new List(req.body)
-        await newList.save()
-
-        // add list to user
-        req.user.lists.push([newList._id])
-        req.user.save()
+        var newList = await createList(req.body.listName, req.body.tasks, req.user)
 
         res.status(201).send(newList)
     } catch (err) {
