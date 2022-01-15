@@ -99,29 +99,25 @@ exports.deleteList = async (req, res) => {
     }
 }
 
-exports.createTask = async (req, res) => {
+exports.createTask = async (req, res, next) => {
 
-    // create task
     try {
-        var newTask = new Task(req.body)
-        await newTask.save()
-    } catch (err) {
-        console.log(err)
-        res.status(404).send({ "message": "task could not be created" })
-        return
+        const listRef = List.findById(req.params.listId)
+    } catch(_) {
+        const e = new Error('list could not be retrieved')
+        e.status = 404
+        throw e
     }
 
-    // add to list
     try {
-        var foundList = await List.findById(req.params.listId)
-        foundList.tasks.push(newTask._id)
-        await foundList.save()
+        console.log("Before await createTask")
+        const newTask = await createTask(req.body.text, req.body.done,)
         res.send(newTask)
-    } catch (err) {
-        res.status(404).send({ "message": "list could not be updated" })
-        console.log(err)
+    } catch(e) {
+        console.log(e)
+        next(e)
     }
-
+    
 
 }
 

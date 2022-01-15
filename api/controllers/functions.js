@@ -22,7 +22,7 @@ exports.createList = (listName, tasks, targetUser) => {
 
 exports.createTask = (text, done, targetList) => {
 
-    return new Promise(async (resolve, _) => {
+    return new Promise(async (resolve, reject) => {
         // create task
         try {
             const newTask = new Task({text, done})
@@ -38,9 +38,11 @@ exports.createTask = (text, done, targetList) => {
             targetList.tasks.push(newTask._id)
             await targetList.save()
         } catch (_) {
-            const e = new Error("list ")
+            const e = new Error()
+            e.message = "couldn't save task to list"
             e.status = 404
-            throw e
+            reject(e)
+            return
         }
         
         resolve(newTask)
