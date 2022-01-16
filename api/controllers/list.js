@@ -18,15 +18,14 @@ exports.getAllLists = async (req, res) => {
 
 }
 
-exports.createList = async (req, res) => {
+exports.createList = async (req, res, next) => {
     // we need listName
     try {
         var newList = await createList(req.body.listName, req.body.tasks, req.user)
 
         res.status(201).send(newList)
     } catch (err) {
-        console.log(err)
-        res.status(404).send({ message: "error" })
+        next(err)
     }
 }
 

@@ -4,16 +4,28 @@ const User = require('../models/user.js')
 
 exports.createList = (listName, tasks, targetUser) => {
     
-    return new Promise(async (resolve, _) => {
-        const newList = new List({listName, tasks})
-        await newList.save()
+    return new Promise(async (resolve, reject) => {
 
-        // add list to user
-        targetUser.lists.push([newList._id])
-        targetUser.save()
+        try {
+            const newList = new List({listName, tasks})
+            await newList.save()
+
+            // add list to user
+            targetUser.lists.push([newList._id])
+            targetUser.save()
+            
+            // return list reference
+            resolve(newList)
+        } catch(err) {
+            // TODO: test this
+            // TODO2: prettify all the code 
+            const customErr = Error()
+            customErr.message = 'creating list failed'
+            customErr.status = 500
+            reject(customErr)
+            return
+        }
         
-        // return list reference
-        resolve(newList)
     })
 
     
@@ -32,7 +44,7 @@ exports.createTask = (text, done, targetList) => {
         } catch (_) {
             const e = new Error()
             e.message = "task could not be created"
-            e.status = 404
+            e.status = 500
             reject(e)
             return
         }
