@@ -23,21 +23,26 @@ exports.createList = (listName, tasks, targetUser) => {
 exports.createTask = (text, done, targetList) => {
 
     return new Promise(async (resolve, reject) => {
+
+        let newTask;
         // create task
         try {
-            const newTask = new Task({text, done})
+            newTask = new Task({text, done})
             await newTask.save()
         } catch (_) {
-            const e = new Error("task could not be created")
+            const e = new Error()
+            e.message = "task could not be created"
             e.status = 404
-            throw e
+            reject(e)
+            return
         }
 
         // add to list
         try {
             targetList.tasks.push(newTask._id)
             await targetList.save()
-        } catch (_) {
+        } catch (err) {
+            console.log(err)
             const e = new Error()
             e.message = "couldn't save task to list"
             e.status = 404

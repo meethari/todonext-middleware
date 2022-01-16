@@ -101,8 +101,10 @@ exports.deleteList = async (req, res) => {
 
 exports.createTask = async (req, res, next) => {
 
+    let listRef;
+
     try {
-        const listRef = List.findById(req.params.listId)
+        listRef = await List.findById(req.params.listId)
     } catch(_) {
         const e = new Error('list could not be retrieved')
         e.status = 404
@@ -110,11 +112,9 @@ exports.createTask = async (req, res, next) => {
     }
 
     try {
-        console.log("Before await createTask")
-        const newTask = await createTask(req.body.text, req.body.done,)
+        const newTask = await createTask(req.body.text, req.body.done, listRef)
         res.send(newTask)
     } catch(e) {
-        console.log(e)
         next(e)
     }
     
