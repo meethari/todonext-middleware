@@ -3,6 +3,8 @@ const saltRounds = 10;
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const User = require("../models/user");
+const List = require("../models/list");
+const Task = require("../models/task");
 const { createList, createTask } = require("../functions.js");
 
 exports.login = async (req, res, next) => {
@@ -71,35 +73,39 @@ exports.register = async (req, res) => {
 
 	// Create user
 	const passwordHash = await bcrypt.hash(req.body.password, saltRounds);
+
+	const task1 = new Task({
+		text: "1. Mark this task as done by checking the checkbox next to it!",
+		done: false,
+	});
+	const task2 = new Task({
+		text: "2. Add a task to this list using the 'Add Task' button!",
+		done: false,
+	});
+	const task3 = new Task({
+		text: "3. Create another list using the 'New List' button!",
+		done: false,
+	});
+	const task4 = new Task({
+		text: "You've got the hang of this! Delete this list and start using ToDoNext!",
+		done: false,
+	});
+
+	await Promise.all([task1.save(), task2.save(), task3.save(), task4.save()]);
+
+	const onboardingList = new List({
+		listName: "Introduction to ToDoNext",
+		tasks: [task1._id, task2._id, task3._id, task4._id],
+	});
+
+	await onboardingList.save();
+
 	var newUser = new User({
 		username: req.body.username,
 		passwordHash,
-		lists: [],
+		lists: [onboardingList._id],
 	});
 	await newUser.save();
-
-	// generate onboarding list
-	const onboardingList = await createList("Welcome to ToDoNext!", [], newUser);
-	await createTask(
-		"1. Mark this task as done by checking the checkbox next to it!",
-		false,
-		onboardingList
-	);
-	await createTask(
-		"2. Add a task to this list using the 'Add Task' button!",
-		false,
-		onboardingList
-	);
-	await createTask(
-		"3. Create another list using the 'New List' button!",
-		false,
-		onboardingList
-	);
-	await createTask(
-		"You've got the hang of this! Delete this list and start using ToDoNext!",
-		false,
-		onboardingList
-	);
 
 	// log in user and redirect them
 	const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
