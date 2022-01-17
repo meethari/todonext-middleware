@@ -1,7 +1,7 @@
 const List = require("../models/list.js");
 const Task = require("../models/task.js");
 const User = require("../models/user.js");
-const { createList, createTask } = require("./functions.js");
+const { createList, createTask } = require("../functions.js");
 
 exports.getAllLists = async (req, res) => {
 	// current user

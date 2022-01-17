@@ -1,6 +1,6 @@
-const List = require("../models/list.js");
-const Task = require("../models/task.js");
-const User = require("../models/user.js");
+const List = require("./models/list.js");
+const Task = require("./models/task.js");
+const User = require("./models/user.js");
 
 exports.createList = (listName, tasks, targetUser) => {
 	return new Promise(async (resolve, reject) => {

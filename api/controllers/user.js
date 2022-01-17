@@ -3,6 +3,7 @@ const saltRounds = 10;
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const User = require("../models/user");
+const { createList, createTask } = require("../functions.js");
 
 exports.login = async (req, res, next) => {
 	/*
@@ -78,6 +79,27 @@ exports.register = async (req, res) => {
 	await newUser.save();
 
 	// generate onboarding list
+	const onboardingList = await createList("Welcome to ToDoNext!", [], newUser);
+	await createTask(
+		"1. Mark this task as done by checking the checkbox next to it!",
+		false,
+		onboardingList
+	);
+	await createTask(
+		"2. Add a task to this list using the 'Add Task' button!",
+		false,
+		onboardingList
+	);
+	await createTask(
+		"3. Create another list using the 'New List' button!",
+		false,
+		onboardingList
+	);
+	await createTask(
+		"You've got the hang of this! Delete this list and start using ToDoNext!",
+		false,
+		onboardingList
+	);
 
 	// log in user and redirect them
 	const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
